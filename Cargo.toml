@@ -4,16 +4,15 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-embassy-executor = { git = "https://github.com/embassy-rs/embassy", version = "0.6.0", features = [
+embassy-executor = { git = "https://github.com/embassy-rs/embassy", version = "0.7.0", features = [
   "arch-cortex-m",
   "executor-thread",
   "defmt",
-  "integrated-timers",
 ] }
 defmt-rtt = "0.4"
 panic-probe = { version = "0.3" }
-embassy-time = { git = "https://github.com/embassy-rs/embassy", version = "0.3.2" }
-embassy-rp = { git = "https://github.com/embassy-rs/embassy", version = "0.2.0", features = [
+embassy-time = { git = "https://github.com/embassy-rs/embassy", version = "0.4" }
+embassy-rp = { git = "https://github.com/embassy-rs/embassy", version = "0.4", features = [
   "defmt",
   "time-driver",
   "critical-section-impl",
