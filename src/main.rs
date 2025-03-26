@@ -83,11 +83,27 @@ async fn blink<'a>(led: &mut Output<'a>, c:char, basetime:u64) {
     }
 }
 
+async fn display_message<'a>(led: &mut Output<'a>, message: &str, basetime:u64) {
+    for word in message.split_whitespace(){
+        for character in word.chars(){
+            if let Some(morse) = MORSE_CODE[character as usize] {
+                for signal in morse.chars() {
+                    blink(led,signal,basetime).await;
+                }
+                Timer::after_millis(basetime*3).await;
+            }else{
+                continue;
+            }
+        }
+        Timer::after_millis(basetime*7).await;
+    }
+}
+
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
 
-    let basetime:u64 = 100;
+    let basetime:u64 = 200;
     
     let p = embassy_rp::init(Default::default());
     let mut led = Output::new(p.PIN_25, Level::Low);
@@ -97,64 +113,16 @@ async fn main(_spawner: Spawner) {
     let sos = "SOS";
     loop {
         //blink message:
-        for word in message.split_whitespace(){
-            for character in word.chars(){
-                if let Some(morse) = MORSE_CODE[character as usize] {
-                    for signal in morse.chars() {
-                        blink(&mut led,signal,basetime).await;
-                    }
-                    Timer::after_millis(basetime*3).await;
-                }else{
-                    continue;
-                }
-            }
-            Timer::after_millis(basetime*7).await;
-        }
-
-        Timer::after_millis(basetime*14).await;
-        for word in hello_world.split_whitespace(){
-            for character in word.chars(){
-                if let Some(morse) = MORSE_CODE[character as usize] {
-                    for signal in morse.chars() {
-                        blink(&mut led,signal,basetime).await;
-                    }
-                    Timer::after_millis(basetime*3).await;
-                }else{
-                    continue;
-                }
-            }
-            Timer::after_millis(basetime*7).await;
-        }
-
-        Timer::after_millis(basetime*14).await;
-        for word in me.split_whitespace(){
-            for character in word.chars(){
-                if let Some(morse) = MORSE_CODE[character as usize] {
-                    for signal in morse.chars() {
-                        blink(&mut led,signal,basetime).await;
-                    }
-                    Timer::after_millis(basetime*3).await;
-                }else{
-                    continue;
-                }
-            }
-            Timer::after_millis(basetime*7).await;
-        }
-
-        Timer::after_millis(basetime*14).await;
-        for word in sos.split_whitespace(){
-            for character in word.chars(){
-                if let Some(morse) = MORSE_CODE[character as usize] {
-                    for signal in morse.chars() {
-                        blink(&mut led,signal,basetime).await;
-                    }
-                    Timer::after_millis(basetime*3).await;
-                }else{
-                    continue;
-                }
-            }
-            Timer::after_millis(basetime*7).await;
-        }
-        Timer::after_millis(basetime*14).await;
+        display_message(&mut led, message, basetime).await;
+        Timer::after_millis(basetime * 14).await;
+        
+        display_message(&mut led, hello_world, basetime).await;
+        Timer::after_millis(basetime * 14).await;
+        
+        display_message(&mut led, me, basetime).await;
+        Timer::after_millis(basetime * 14).await;
+        
+        display_message(&mut led, sos, basetime).await;
+        Timer::after_millis(basetime * 14).await;
     }
 }
